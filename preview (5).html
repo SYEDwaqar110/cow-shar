@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Cow Share Calculator</title>
+
+<style>
+
+body{
+    font-family: Arial;
+    background:#f0f2f5;
+    margin:0;
+    padding:20px;
+}
+
+.container{
+    max-width:700px;
+    margin:auto;
+    background:white;
+    padding:25px;
+    border-radius:15px;
+    box-shadow:0 0 15px rgba(0,0,0,0.1);
+}
+
+h1{
+    text-align:center;
+    margin-bottom:25px;
+    color:#222;
+}
+
+.input-box{
+    margin-bottom:15px;
+}
+
+label{
+    display:block;
+    margin-bottom:5px;
+    font-weight:bold;
+}
+
+input{
+    width:100%;
+    padding:12px;
+    border:1px solid #ccc;
+    border-radius:8px;
+    font-size:16px;
+    box-sizing:border-box;
+}
+
+input:focus{
+    outline:none;
+    border-color:#000;
+}
+
+button{
+    width:100%;
+    padding:14px;
+    background:black;
+    color:white;
+    border:none;
+    border-radius:10px;
+    font-size:16px;
+    cursor:pointer;
+    margin-top:15px;
+    transition:0.3s;
+}
+
+button:hover{
+    background:#333;
+}
+
+.share-card{
+    background:#fafafa;
+    padding:15px;
+    border-radius:10px;
+    margin-top:10px;
+    border:1px solid #ddd;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:20px;
+}
+
+th{
+    background:black;
+    color:white;
+}
+
+td,th{
+    padding:12px;
+    border:1px solid #ccc;
+    text-align:center;
+}
+
+.result-box{
+    margin-top:25px;
+}
+
+.total-rate{
+    margin-top:15px;
+    font-size:18px;
+    font-weight:bold;
+    text-align:center;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Cow Share Calculator</h1>
+
+<div class="input-box">
+<label>Cow Amount</label>
+<input type="number" id="cowAmount">
+</div>
+
+<div class="input-box">
+<label>Meat (Kg)</label>
+<input type="number" id="meat">
+</div>
+
+<div class="input-box">
+<label>Bone (Kg)</label>
+<input type="number" id="bone">
+</div>
+
+<div class="input-box">
+<label>Liver (Kg)</label>
+<input type="number" id="liver">
+</div>
+
+<div class="input-box">
+<label>Total Shares</label>
+<input type="number" id="shares">
+</div>
+
+<button onclick="generateInputs()">Generate Share Inputs</button>
+
+<div id="shareInputs"></div>
+
+<button onclick="calculate()">Calculate Result</button>
+
+<div class="result-box" id="result"></div>
+
+</div>
+
+<script>
+
+function generateInputs(){
+
+    let total = document.getElementById("shares").value;
+    let box = document.getElementById("shareInputs");
+
+    box.innerHTML = "";
+
+    for(let i=0;i<total;i++){
+
+        box.innerHTML += `
+        <div class="share-card">
+            <label>Share ${i+1} Amount</label>
+            <input type="number" id="s${i}">
+        </div>
+        `;
+    }
+
+    enableEnterNavigation();
+}
+
+function calculate(){
+
+    let cowAmount = Number(document.getElementById("cowAmount").value);
+    let meat = Number(document.getElementById("meat").value);
+    let bone = Number(document.getElementById("bone").value);
+    let liver = Number(document.getElementById("liver").value);
+    let total = Number(document.getElementById("shares").value);
+
+    let meatPer = meat / cowAmount;
+    let bonePer = bone / cowAmount;
+    let liverPer = liver / cowAmount;
+
+    let html = `
+    <h2 style="text-align:center;">Result Sheet</h2>
+
+    <table>
+    <tr>
+        <th>Share</th>
+        <th>Amount</th>
+        <th>Meat</th>
+        <th>Bone</th>
+        <th>Liver</th>
+    </tr>
+    `;
+
+    for(let i=0;i<total;i++){
+
+        let share = Number(document.getElementById("s"+i).value);
+
+        html += `
+        <tr>
+            <td>${i+1}</td>
+            <td>${share}</td>
+            <td>${(share*meatPer).toFixed(2)} Kg</td>
+            <td>${(share*bonePer).toFixed(2)} Kg</td>
+            <td>${(share*liverPer).toFixed(2)} Kg</td>
+        </tr>
+        `;
+    }
+
+    let rate = (cowAmount / (meat + bone)).toFixed(2);
+
+    html += `
+    </table>
+
+    <div class="total-rate">
+        Overall Rate: Rs ${rate} / Kg
+    </div>
+    `;
+
+    document.getElementById("result").innerHTML = html;
+}
+
+
+// ENTER → NEXT INPUT
+function enableEnterNavigation(){
+
+    const inputs = document.querySelectorAll("input");
+
+    inputs.forEach((input,index)=>{
+
+        input.addEventListener("keypress",function(e){
+
+            if(e.key==="Enter"){
+
+                e.preventDefault();
+
+                let next = inputs[index+1];
+
+                if(next){
+                    next.focus();
+                }
+
+            }
+
+        });
+
+    });
+
+}
+
+enableEnterNavigation();
+
+</script>
+
+</body>
+</html>
